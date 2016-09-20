@@ -28,7 +28,11 @@ if [ ! "$DISABLE_COLLECTSTATIC" ] && [ -f "$MANAGE_FILE" ] && [ "$DJANGO_INSTALL
     puts-cmd "python $MANAGE_FILE collectstatic --noinput"
 
     # Run collectstatic, cleanup some of the noisy output.
-    python $MANAGE_FILE collectstatic --noinput --traceback 2>&1 | sed '/^Post-processed/d;/^Copying/d;/^$/d' | indent
+    if [ "$DEBUG_COLLECTSTATIC" ]; then
+        python $MANAGE_FILE collectstatic --noinput -v3 --traceback | indent
+    else
+        python $MANAGE_FILE collectstatic --noinput --traceback 2>&1 | sed '/^Post-processed/d;/^Copying/d;/^$/d' | indent
+    fi
     COLLECTSTATIC_STATUS="${PIPESTATUS[0]}"
 
     set -e
